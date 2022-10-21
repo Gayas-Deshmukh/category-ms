@@ -1,15 +1,19 @@
 package com.weshopify.platform.features.categories.aggregate;
 
+import java.io.Serializable;
 import java.util.UUID;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.weshopify.platform.features.categories.command.CategoryCommand;
 import com.weshopify.platform.features.categories.event.CategoryDomainEvent;
+import com.weshopify.platform.features.categories.handlers.CategoryDomainEventPublishHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,8 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Aggregate
 @Slf4j
-public class CategoryAggregate 
+public class CategoryAggregate  implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6357082126439114731L;
+
 	@AggregateIdentifier
 	private String id;
 
@@ -67,6 +76,12 @@ public class CategoryAggregate
 		this.image 			= 	domainEvent.getImage();
 		this.name 			= 	domainEvent.getName();
 		
-		log.info("Called source handller");
+		log.info("In Default event source handler");
+		
+		// Calling External Handler due to it is not getting invoked automatically
+		
+		//CategoryDomainEventPublishHandler handler = new CategoryDomainEventPublishHandler();
+		
+		//handler.onCategoryupdate(domainEvent);
 	}
 }

@@ -6,18 +6,19 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 import lombok.Data;
 
-
 @Data
 public class CategoryCommand implements Serializable
 {
 	
+	private static final long serialVersionUID = 3334156279042412725L;
+
 	/**
 	 * Aggregator will identify command with this annotation
 	 * failing to add it, causing the runtime error
 	 */
 	@TargetAggregateIdentifier
 	private int id;
-
+	
 	private String name;
 	
 	private String alias;
@@ -28,5 +29,4 @@ public class CategoryCommand implements Serializable
 	
 	private String allParentIDs;
 	
-		
 }

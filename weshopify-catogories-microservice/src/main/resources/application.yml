@@ -54,7 +54,19 @@ spring:
     properties:
       hibernate: 
         dialect: ${DB_DIALECT:org.hibernate.dialect.MySQL8Dialect}
- 
+# rabbit aq configuration
+---
+spring:
+  rabbitmq:
+    host: moose.rmq.cloudamqp.com
+    port: 5672
+    username: jsgqnese
+    password: OemR8UZFHuu5at1mOVhGcE-KrEF0S3os
+    virtual-host: jsgqnese
+    template:
+      routing-key: weshopify-plateform-routing-key
+      default-receive-queue:  weshopify-plateform-queue
+      exchange: weshopify-plateform-exchange
 ---
 # In-memory database configuration for QA Env
 spring: 

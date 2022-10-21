@@ -12,8 +12,12 @@ import java.util.concurrent.CompletableFuture;
 import javax.transaction.Transactional;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.eventsourcing.EventSourcingHandler;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,15 +28,32 @@ import com.weshopify.platform.features.categories.bean.CategoryBean;
 import com.weshopify.platform.features.categories.bean.CategoryPageInfo;
 import com.weshopify.platform.features.categories.command.CategoryCommand;
 import com.weshopify.platform.features.categories.domain.Category;
+import com.weshopify.platform.features.categories.event.CategoryDomainEvent;
 import com.weshopify.platform.features.categories.exceptions.CategoryNotFoundException;
 import com.weshopify.platform.features.categories.repo.CategoryRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
 @Transactional
+@Slf4j
 public class CategoryService 
 {
 	public static final int ROOT_CATEGORIES_PER_PAGE = 4;
+	
+	@Value("${spring.rabbitmq.template.default-receive-queue}")
+	private String qname;
+	
+	@Value("${spring.rabbitmq.template.routing-key}")
+	private String routingKey;
+	
+	@Value("${spring.rabbitmq.template.exchange}")
+	private String exchange;
+	
+	
+	@Autowired
+	public RabbitTemplate rabbitMqTemplate;
 	
 	@Autowired
 	private CategoryRepository repo;
@@ -260,7 +281,7 @@ public class CategoryService
 		
 		// Send Command to the Command handler
 		 CompletableFuture<CategoryCommand> future = commandGateWay.send(command);
-		 
+
 	    // Checking whether command has been delivered or not
 		 if(future.isDone())
 		 {
@@ -278,7 +299,6 @@ public class CategoryService
 		 {
 			 throw new RuntimeException("command un delivered");
 		 }
-				
 	}
 	
 	
@@ -290,4 +310,20 @@ public class CategoryService
 		
 		repo.deleteById(id);
 	}	
+	
+	
+	    @EventSourcingHandler
+		public void onCategoryupdate(CategoryDomainEvent updateCategoryEvent)
+		{
+			log.info("Updated Category is ready for publishing:\t" + updateCategoryEvent);
+		//	log.info("Queue Name  :"+ this.qname);
+			
+			 
+			// log.info("quename is:\t"+ this.rabbitMqTemplate.getExchange());
+			// log.info("routing key is:\t"+ this.rabbitMqTemplate.getRoutingKey());
+			 log.info("quename is:\t"+ this.qname);
+			 log.info("routing key is:\t"+ this.routingKey);
+			 log.info("exchange key is:\t"+ this.exchange);
+			 
+		}
 }
