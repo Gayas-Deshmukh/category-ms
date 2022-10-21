@@ -309,21 +309,5 @@ public class CategoryService
 		}
 		
 		repo.deleteById(id);
-	}	
-	
-	
-	    @EventSourcingHandler
-		public void onCategoryupdate(CategoryDomainEvent updateCategoryEvent)
-		{
-			log.info("Updated Category is ready for publishing:\t" + updateCategoryEvent);
-		//	log.info("Queue Name  :"+ this.qname);
-			
-			 
-			// log.info("quename is:\t"+ this.rabbitMqTemplate.getExchange());
-			// log.info("routing key is:\t"+ this.rabbitMqTemplate.getRoutingKey());
-			 log.info("quename is:\t"+ this.qname);
-			 log.info("routing key is:\t"+ this.routingKey);
-			 log.info("exchange key is:\t"+ this.exchange);
-			 
-		}
+	}
 }

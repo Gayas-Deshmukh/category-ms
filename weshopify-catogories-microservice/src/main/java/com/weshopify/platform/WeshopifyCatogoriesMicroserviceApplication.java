@@ -15,13 +15,4 @@ public class WeshopifyCatogoriesMicroserviceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WeshopifyCatogoriesMicroserviceApplication.class, args);
 	}
-	
-	
-	    @Bean
-	    @Primary
-	    public Serializer jacksonSerializer(ObjectMapper objectMapper) {
-	        return JacksonSerializer.builder()
-	                .defaultTyping()
-	                .build();
-	    }
 }

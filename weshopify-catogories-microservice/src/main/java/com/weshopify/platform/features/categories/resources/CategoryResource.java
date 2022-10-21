@@ -146,6 +146,27 @@ public class CategoryResource {
 		return ResponseEntity.status(HttpStatus.OK).body(categoryUpdated);
 	}
 	
+	@GetMapping(value="/categories/{id}")
+	public ResponseEntity<CategoryBean> getCategoryById(@PathVariable("id") Integer id) 
+	{
+		Category categoryDomain = null;
+		try 
+		{
+			categoryDomain = service.get(id);
+		} 
+		catch (CategoryNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		CategoryBean catBean = new CategoryBean();
+		BeanUtils.copyProperties(categoryDomain, catBean);
+		return ResponseEntity.status(HttpStatus.OK).body(catBean);
+	}
+	
+	
+	
 	@DeleteMapping("/categories/delete/{id}")
 	public ResponseEntity<List<Category>> deleteCategory(@PathVariable(name = "id") Integer id) {
 		try {
